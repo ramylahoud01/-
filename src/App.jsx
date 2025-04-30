@@ -483,7 +483,7 @@ export default function App() {
                 alt="Breih landscape"
                 sx={{
                   width: "100%",
-                  height: { xs: 200, sm: 300, md: 400 },
+                  height: { xs: 300, sm: 300, md: 400 },
                   objectFit: "cover",
                   display: "block",
                 }}
