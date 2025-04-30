@@ -244,7 +244,24 @@ const sections = [
     ],
   },
 ];
-
+const members = [
+  { id: 1, name: "طانوس سعد لحود", image: "/public/member1.jpg" },
+  { id: 2, name: "نسيم عارف العلي", image: "/public/member10.jpg" },
+  { id: 3, name: "وسام أمين يحي", image: "/public/member4.jpg" },
+  { id: 11, name: "لودي هيكل حسون", image: "/public/member8.jpg" },
+  { id: 4, name: "ماريا ميشال الدايه", image: "/public/member2.jpg" },
+  { id: 5, name: "حلمي رامز أبي عز الدين", image: "/public/member6.jpg" },
+  { id: 12, name: "محسن محمود محاسن", image: "/public/member9.jpg" },
+  {
+    id: 10,
+    name: "شكري سعيد عدوان",
+    image: "/member3.jpg",
+  },
+  { id: 7, name: "جيسي طانوس لحود", image: "/public/member11.jpg" },
+  { id: 8, name: "جوزيف مارون خليل", image: "/public/member7.jpg" },
+  { id: 9, name: "حنين سميح العلي", image: "/public/member5.jpg" },
+  { id: 6, name: "حكمت رؤوف عبد السلام", image: "/public/member12.jpg" },
+];
 export default function App() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -515,7 +532,98 @@ export default function App() {
             </Box>
           </Paper>
         </Fade>
+        {/* Team Members Section */}
+        <Slide direction="up" in={true} timeout={500} mountOnEnter>
+          <Box
+            id="members"
+            sx={{ mb: { xs: 3, sm: 4 }, scrollMarginTop: "80px" }}
+          >
+            <Paper
+              elevation={0}
+              sx={{
+                borderRadius: { xs: 2, sm: 3 },
+                overflow: "hidden",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              {/* Section Header */}
+              <Box
+                sx={{
+                  p: { xs: 2, sm: 2.5 },
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  color: "white",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography
+                  variant={isMobile ? "h6" : "h4"}
+                  component="h1"
+                  sx={{
+                    fontWeight: "bold",
+                  }}
+                  color="primary.main"
+                >
+                  أعضاء اللائحة
+                </Typography>
+              </Box>
 
+              {/* Members Grid */}
+              <Box sx={{ p: { xs: 2, sm: 3 } }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "repeat(2, 1fr)", // Show 2 items per row on extra-small screens
+                      sm: "repeat(2, 1fr)",
+                      md: "repeat(4, 1fr)",
+                    },
+                    gap: { xs: 2, sm: 3 },
+                  }}
+                >
+                  {members.map((member) => (
+                    <Box
+                      key={member.id}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        textAlign: "center",
+                        transition: "transform 0.3s ease",
+                        "&:hover": {
+                          transform: "translateY(-5px)",
+                        },
+                      }}
+                    >
+                      <Avatar
+                        src={member.image}
+                        alt={member.name}
+                        sx={{
+                          width: { xs: 100, sm: 120, md: 130 },
+                          height: { xs: 100, sm: 120, md: 130 },
+                          mb: 1.5,
+                          boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
+                          border: "1px solid red",
+                        }}
+                      />
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          fontWeight: "bold",
+                          color: "text.primary",
+                          fontSize: { xs: "0.95rem", sm: "1rem" },
+                        }}
+                      >
+                        {member.name}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
+        </Slide>
         {/* Section Content */}
         {sections.map((section, index) => (
           <Slide
