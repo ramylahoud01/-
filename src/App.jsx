@@ -1,25 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
   Typography,
-  Container,
   Box,
   Button,
-  Divider,
   Paper,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
+  Divider,
   IconButton,
   useMediaQuery,
   Drawer,
-  Menu,
-  MenuItem,
+  Slide,
+  Fade,
+  Container,
+  Avatar,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import logo from "../public/logo.png"; // Adjust the path to your logo image
 // Import Material UI icons
 import {
   Gavel as GavelIcon,
@@ -31,6 +30,7 @@ import {
   HealthAndSafety as HealthAndSafetyIcon,
   SportsSoccer as SportsSoccerIcon,
   Menu as MenuIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 
 // Process sections data by splitting items into title and description
@@ -38,7 +38,7 @@ const sections = [
   {
     id: "legal",
     title: "الشق القانوني",
-    icon: <GavelIcon fontSize="medium" />,
+    icon: <GavelIcon />,
     items: [
       {
         title: "بلدية عصرية",
@@ -70,7 +70,7 @@ const sections = [
   {
     id: "development",
     title: "الشق الإنمائي",
-    icon: <BuildIcon fontSize="medium" />,
+    icon: <BuildIcon />,
     items: [
       {
         title: "بناء مقرّ بلدي",
@@ -116,7 +116,7 @@ const sections = [
   {
     id: "agriculture",
     title: "الشق الزراعي",
-    icon: <SpaIcon fontSize="medium" />,
+    icon: <SpaIcon />,
     items: [
       {
         title: "دعم الزراعة المحلية",
@@ -178,7 +178,7 @@ const sections = [
   {
     id: "tourism",
     title: "الشق السياحي",
-    icon: <BeachAccessIcon fontSize="medium" />,
+    icon: <BeachAccessIcon />,
     items: [
       {
         title: "مهرجان بريح الشوف",
@@ -200,7 +200,7 @@ const sections = [
   {
     id: "digital",
     title: "التواصل الرقمي",
-    icon: <DevicesIcon fontSize="medium" />,
+    icon: <DevicesIcon />,
     items: [
       {
         title: "منصة رقمية تفاعلية",
@@ -212,7 +212,7 @@ const sections = [
   {
     id: "health",
     title: "الشق الصحي",
-    icon: <HealthAndSafetyIcon fontSize="medium" />,
+    icon: <HealthAndSafetyIcon />,
     items: [
       {
         title: "التواصل مع الجمعيات ووزارة الصحة",
@@ -229,7 +229,7 @@ const sections = [
   {
     id: "sports",
     title: "الشق الرياضي",
-    icon: <SportsSoccerIcon fontSize="medium" />,
+    icon: <SportsSoccerIcon />,
     items: [
       {
         title: "مهرجان رياضي سنوي",
@@ -249,207 +249,215 @@ export default function App() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [activeSection, setActiveSection] = useState("legal");
-  const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Handle scroll effect for AppBar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleNavigate = (sectionId) => {
     setActiveSection(sectionId);
-    setMobileMenuAnchor(null);
+    setDrawerOpen(false);
 
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     }
   };
 
-  const handleMobileMenuOpen = (event) => {
-    setMobileMenuAnchor(event.currentTarget);
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
   };
 
-  const handleMobileMenuClose = () => {
-    setMobileMenuAnchor(null);
-  };
+  // Navigation menu component (for both desktop and mobile)
+  const NavigationMenu = ({ variant }) => (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: variant === "drawer" ? "column" : "row",
+        gap: variant === "drawer" ? 1 : 0,
+      }}
+    >
+      {sections.map((section) => (
+        <Button
+          key={section.id}
+          onClick={() => handleNavigate(section.id)}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: variant === "drawer" ? "flex-start" : "center",
+            gap: 1,
+            fontSize:
+              variant === "drawer"
+                ? "0.95rem"
+                : { sm: "0.75rem", md: "0.85rem" },
+            fontWeight: activeSection === section.id ? "bold" : "normal",
+            color:
+              activeSection === section.id ? "primary.main" : "text.secondary",
+            borderBottom:
+              variant !== "drawer" && activeSection === section.id
+                ? "2px solid"
+                : "none",
+            borderRight:
+              variant === "drawer" && activeSection === section.id
+                ? "3px solid"
+                : "none",
+            borderColor: "primary.main",
+            borderRadius: 0,
+            py: variant === "drawer" ? 1.5 : 2,
+            px: variant === "drawer" ? 2 : 1.5,
+            textAlign: "right",
+            width: variant === "drawer" ? "100%" : "auto",
+            "&:hover": {
+              backgroundColor:
+                variant === "drawer" ? "rgba(0, 0, 0, 0.04)" : "transparent",
+              color: "primary.main",
+            },
+            transition: "all 0.2s ease",
+          }}
+          startIcon={React.cloneElement(section.icon, {
+            sx: {
+              fontSize: variant === "drawer" ? "medium" : "small",
+              color:
+                activeSection === section.id
+                  ? "primary.main"
+                  : "text.secondary",
+            },
+          })}
+        >
+          {section.title}
+        </Button>
+      ))}
+    </Box>
+  );
 
   return (
     <Box sx={{ minHeight: "100vh", direction: "rtl" }}>
+      {/* AppBar with blur effect on scroll */}
       <AppBar
         position="sticky"
+        elevation={scrolled ? 3 : 0}
         sx={{
-          backdropFilter: "blur(20px)",
-          boxShadow: "none",
-          bgcolor: "white",
-          width: "100%",
+          backdropFilter: scrolled ? "blur(10px)" : "none",
+          bgcolor: scrolled ? "rgba(255, 255, 255, 0.9)" : "white",
+          transition: "all 0.3s ease",
         }}
       >
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          {/* Logo on the left */}
+        <Toolbar
+          sx={{ justifyContent: "space-between", px: { xs: 1, sm: 2, md: 3 } }}
+        >
+          {/* Logo */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <img
-              src={logo}
+            <Box
+              component="img"
+              src="/logo.png"
               alt="Logo"
-              style={{
-                height: 75,
-                maxWidth: isMobile ? 120 : 160,
+              sx={{
+                height: { xs: 60, sm: 70 },
                 objectFit: "contain",
+                transition: "all 0.3s ease",
               }}
             />
           </Box>
 
-          {/* Sections on the right */}
+          {/* Navigation */}
           {isMobile ? (
-            <>
-              <IconButton
-                edge="end"
-                color="inherit"
-                aria-label="menu"
-                onClick={handleMobileMenuOpen}
-                sx={{
-                  color: "secondary.main",
-                  transition: "transform 0.3s ease",
-                }}
-              >
-                <MenuIcon
-                  fontSize="small"
-                  sx={{
-                    transition: "transform 0.3s ease",
-                    "&:hover": { transform: "scale(1.2)" },
-                  }}
-                />
-              </IconButton>
-              <Menu
-                anchorEl={mobileMenuAnchor}
-                open={Boolean(mobileMenuAnchor)}
-                onClose={handleMobileMenuClose}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                PaperProps={{
-                  sx: {
-                    bgcolor: "white",
-                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                  },
-                }}
-              >
-                {sections.map((section) => (
-                  <MenuItem
-                    key={section.id}
-                    onClick={() => handleNavigate(section.id)}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      color:
-                        activeSection === section.id
-                          ? "primary.main"
-                          : "secondary.main",
-                      borderLeft:
-                        activeSection === section.id ? "2px solid" : "none",
-                      borderColor: "primary.main",
-                      fontWeight:
-                        activeSection === section.id ? "bold" : "normal",
-                      py: 1,
-                      px: 2,
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        bgcolor: "primary.light",
-                        transform: "scale(1.02)",
-                      },
-                    }}
-                  >
-                    {React.cloneElement(section.icon, {
-                      sx: {
-                        color:
-                          activeSection === section.id
-                            ? "primary.main"
-                            : "secondary.main",
-                        fontSize: "small",
-                        transition: "transform 0.3s ease",
-                      },
-                    })}
-                    <Typography variant="body2">{section.title}</Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </>
-          ) : (
-            <Box
+            <IconButton
+              onClick={toggleDrawer}
+              edge="end"
+              color="inherit"
+              aria-label="menu"
               sx={{
-                display: "flex",
-                justifyContent: "flex-end",
+                color: "primary.main",
               }}
             >
-              {sections.map((section) => (
-                <Button
-                  key={section.id}
-                  onClick={() => handleNavigate(section.id)}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                    fontWeight:
-                      activeSection === section.id ? "bold" : "normal",
-                    borderBottom:
-                      activeSection === section.id ? "2px solid" : "none",
-                    borderColor: "primary.main",
-                    borderRadius: 0,
-                    mx: 0.5,
-                    py: 1.5,
-                    px: { sm: 1, md: 2 },
-                    fontSize: { sm: "0.8rem", md: "0.9rem" },
-                    color:
-                      activeSection === section.id
-                        ? "primary.main"
-                        : "secondary.main",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      bgcolor: "transparent",
-                      transform: "scale(1.05)",
-                    },
-                  }}
-                  startIcon={React.cloneElement(section.icon, {
-                    sx: {
-                      marginLeft: 1,
-                      color:
-                        activeSection === section.id
-                          ? "primary.main"
-                          : "secondary.main",
-                      fontSize: "small",
-                      transition: "transform 0.3s ease",
-                    },
-                  })}
-                >
-                  {section.title}
-                </Button>
-              ))}
-            </Box>
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <NavigationMenu variant="desktop" />
           )}
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ py: { xs: 1, sm: 4 }, px: 4 }}>
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 6 }}>
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={toggleDrawer}
+        PaperProps={{
+          sx: {
+            width: "70%",
+            maxWidth: 300,
+            pt: 2,
+            bgcolor: "white",
+          },
+        }}
+      >
+        <Box
+          sx={{
+            mb: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            px: 2,
+          }}
+        >
+          <IconButton onClick={toggleDrawer}>
+            <CloseIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            color="primary.main"
+            sx={{ fontWeight: "bold" }}
+          >
+            القائمة
+          </Typography>
+        </Box>
+        <Divider sx={{ mb: 2 }} />
+        <NavigationMenu variant="drawer" />
+      </Drawer>
+
+      <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 4 } }}>
+        {/* Hero Banner */}
+        <Fade in={true} timeout={1000}>
           <Paper
             elevation={0}
             sx={{
               width: "100%",
-              borderRadius: 2,
+              borderRadius: { xs: 2, sm: 3 },
               overflow: "hidden",
               position: "relative",
+              mb: { xs: 3, sm: 5 },
+              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
             }}
           >
-            {/* Background image with text overlay */}
             <Box sx={{ position: "relative" }}>
+              {/* Banner Image */}
               <Box
                 component="img"
                 src="/breeh.jpg"
                 alt="Breih landscape"
                 sx={{
                   width: "100%",
-                  maxHeight: { xs: 250, sm: 600 },
+                  height: { xs: 200, sm: 300, md: 400 },
                   objectFit: "cover",
                   display: "block",
                 }}
@@ -458,7 +466,7 @@ export default function App() {
               {/* Overlay with text */}
               <Box
                 sx={{
-                  backgroundColor: "rgba(0, 0, 0, 0.35)",
+                  backgroundColor: "rgba(0, 0, 0, 0.4)",
                   position: "absolute",
                   top: 0,
                   left: 0,
@@ -476,7 +484,7 @@ export default function App() {
                   variant="h2"
                   sx={{
                     fontWeight: "700",
-                    textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     mb: { xs: 1, sm: 2 },
                     color: "white",
                     fontSize: {
@@ -484,9 +492,6 @@ export default function App() {
                       sm: "2.5rem",
                       md: "3rem",
                     },
-                    maxWidth: { xs: "100%", sm: "80%" },
-                    margin: "0 auto",
-                    direction: "rtl", // Ensure proper RTL text direction
                   }}
                 >
                   مشروع لائحة بريح تستحق
@@ -496,15 +501,12 @@ export default function App() {
                   variant="h6"
                   sx={{
                     color: "white",
-                    textShadow: "1px 1px 3px rgba(0,0,0,0.6)",
+                    textShadow: "1px 1px 3px rgba(0,0,0,0.7)",
                     fontSize: {
                       xs: "0.9rem",
-                      sm: "1.3rem",
-                      md: "1.6rem",
+                      sm: "1.2rem",
+                      md: "1.5rem",
                     },
-                    maxWidth: { xs: "100%", sm: "80%" },
-                    margin: "0 auto",
-                    direction: "rtl", // Ensure proper RTL text direction
                   }}
                 >
                   رؤيتنا التنموية لنهضة شاملة في بريح الشوف
@@ -512,155 +514,119 @@ export default function App() {
               </Box>
             </Box>
           </Paper>
-        </Box>
+        </Fade>
 
+        {/* Section Content */}
         {sections.map((section, index) => (
-          <Box
+          <Slide
             key={section.id}
-            id={section.id}
-            sx={{
-              mb: { xs: 2, sm: 3 },
-              borderTopLeftRadius: { xs: 12, sm: 16 },
-              borderTopRightRadius: { xs: 12, sm: 16 },
-              borderBottomLeftRadius: { xs: 6, sm: 8 },
-              borderBottomRightRadius: { xs: 6, sm: 8 },
-              overflow: "hidden",
-              boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",
-              transition: "all 0.3s ease-in-out",
-              "&:hover": {
-                boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)",
-              },
-            }}
+            direction="up"
+            in={true}
+            timeout={300 + index * 100}
+            mountOnEnter
+            unmountOnExit
           >
-            <Paper
-              elevation={0}
+            <Box
+              id={section.id}
               sx={{
-                overflow: "hidden",
-                borderTopLeftRadius: { xs: 12, sm: 16 },
-                borderTopRightRadius: { xs: 12, sm: 16 },
-                borderBottomLeftRadius: { xs: 6, sm: 8 },
-                borderBottomRightRadius: { xs: 6, sm: 8 },
+                mb: { xs: 3, sm: 4 },
+                scrollMarginTop: "80px",
               }}
             >
-              <Box
+              <Paper
+                elevation={2}
                 sx={{
-                  p: { xs: 1.5, sm: 2 },
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  bgcolor: "rgba(240, 240, 240, 0.9)",
-                  color: "white",
-                  borderTopLeftRadius: { xs: 12, sm: 16 },
-                  borderTopRightRadius: { xs: 12, sm: 16 },
+                  borderRadius: { xs: 2, sm: 3 },
+                  overflow: "hidden",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+                  },
                 }}
               >
+                {/* Section Header */}
                 <Box
                   sx={{
+                    p: { xs: 2, sm: 2.5 },
                     display: "flex",
                     alignItems: "center",
-                    gap: { xs: 1, sm: 2 },
+                    gap: 2,
+                    bgcolor: "primary.main",
+                    color: "white",
                   }}
                 >
-                  <Box
+                  <Avatar
                     sx={{
-                      bgcolor: "rgba(19, 32, 60,0.8)",
-                      borderRadius: "50%",
-                      width: { xs: 32, sm: 40 },
-                      height: { xs: 32, sm: 40 },
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      mr: { xs: 1, sm: 2 },
+                      bgcolor: "white",
+                      color: "primary.main",
+                      width: { xs: 36, sm: 44 },
+                      height: { xs: 36, sm: 44 },
                     }}
                   >
-                    {section.icon}
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      component="h2"
-                      sx={{
-                        fontWeight: "bold",
-                        fontSize: { xs: "1rem", sm: "1.2rem", md: "1.5rem" },
-                        transition: "color 0.3s ease",
-                        "&:hover": {
-                          color: "primary.dark",
-                        },
-                      }}
-                      color="primary.main"
-                    >
-                      {section.title}{" "}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        opacity: 0.9,
-                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                      }}
-                    >
-                      {section.subtitle}
-                    </Typography>
-                  </Box>
+                    {React.cloneElement(section.icon, {
+                      fontSize: isMobile ? "small" : "medium",
+                    })}
+                  </Avatar>
+                  <Typography
+                    variant={isMobile ? "h6" : "h5"}
+                    component="h2"
+                    sx={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {section.title}
+                  </Typography>
                 </Box>
-              </Box>
 
-              {/* Content area */}
-              <Box sx={{ bgcolor: "white", display: "block" }}>
+                {/* Section Content - Items List */}
                 <List sx={{ py: 0 }}>
                   {section.items.map((item, itemIndex) => (
                     <ListItem
                       key={itemIndex}
                       sx={{
-                        py: { xs: 1.5, sm: 2 },
+                        py: { xs: 2, sm: 2.5 },
                         px: { xs: 2, sm: 3 },
+                        flexDirection: "column",
+                        alignItems: "flex-start",
                         "&:not(:last-child)": {
-                          borderBottom: "1px solid #f0f0f0",
+                          borderBottom: "1px solid rgba(0,0,0,0.08)",
                         },
                       }}
                     >
-                      <ListItemText
-                        primary={
-                          <Box
-                            sx={{
-                              display: "flex",
-                              flexDirection: { xs: "column", sm: "row" },
-                              gap: { xs: 0.5, sm: 1 },
-                            }}
-                          >
-                            <Typography
-                              component="span"
-                              sx={{
-                                fontWeight: "bold",
-                                color: "#333",
-                                mr: 1,
-                                textAlign: "right",
-                                fontSize: { xs: "0.875rem", sm: "1rem" },
-                              }}
-                            >
-                              {item.title} :
-                            </Typography>
-                            <Typography
-                              component="span"
-                              sx={{
-                                textAlign: "right",
-                                color: "#555",
-                                ml: { xs: 0, sm: 1 },
-                                fontSize: { xs: "0.815rem", sm: "0.938rem" },
-                              }}
-                            >
-                              {item.description}
-                            </Typography>
-                          </Box>
-                        }
-                      />
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          fontWeight: "bold",
+                          color: "text.primary",
+                          fontSize: { xs: "0.95rem", sm: "1.1rem" },
+                          mb: 0.5,
+                          width: "100%",
+                          textAlign: "right",
+                        }}
+                      >
+                        {item.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          fontSize: { xs: "0.85rem", sm: "0.95rem" },
+                          width: "100%",
+                          textAlign: "right",
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        {item.description}
+                      </Typography>
                     </ListItem>
                   ))}
                 </List>
-              </Box>
-            </Paper>
-          </Box>
+              </Paper>
+            </Box>
+          </Slide>
         ))}
-      </Box>
+      </Container>
     </Box>
   );
 }
