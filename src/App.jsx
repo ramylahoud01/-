@@ -32,6 +32,18 @@ import {
   Menu as MenuIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
+import member1 from "./../public/member1.jpg";
+import member2 from "./../public/member2.jpg";
+import member3 from "./../public/member3.jpg";
+import member4 from "./../public/member4.jpg";
+import member5 from "./../public/member5.jpg";
+import member6 from "./../public/member6.jpg";
+import member7 from "./../public/member7.jpg";
+import member8 from "./../public/member8.jpg";
+import member9 from "./../public/member9.jpg";
+import member10 from "./../public/member10.jpg";
+import member11 from "./../public/member11.jpg";
+import member12 from "./../public/member12.jpg";
 
 // Process sections data by splitting items into title and description
 const sections = [
@@ -245,23 +257,20 @@ const sections = [
   },
 ];
 const members = [
-  { id: 1, name: "طانوس سعد لحود", image: "/public/member1.jpg" },
-  { id: 2, name: "نسيم عارف العلي", image: "/public/member10.jpg" },
-  { id: 3, name: "وسام أمين يحي", image: "/public/member4.jpg" },
-  { id: 11, name: "لودي هيكل حسون", image: "/public/member8.jpg" },
-  { id: 4, name: "ماريا ميشال الدايه", image: "/public/member2.jpg" },
-  { id: 5, name: "حلمي رامز أبي عز الدين", image: "/public/member6.jpg" },
-  { id: 12, name: "محسن محمود محاسن", image: "/public/member9.jpg" },
-  {
-    id: 10,
-    name: "شكري سعيد عدوان",
-    image: "/member3.jpg",
-  },
-  { id: 7, name: "جيسي طانوس لحود", image: "/public/member11.jpg" },
-  { id: 8, name: "جوزيف مارون خليل", image: "/public/member7.jpg" },
-  { id: 9, name: "حنين سميح العلي", image: "/public/member5.jpg" },
-  { id: 6, name: "حكمت رؤوف عبد السلام", image: "/public/member12.jpg" },
+  { id: 1, name: "طانوس سعد لحود", image: member1 },
+  { id: 2, name: "نسيم عارف العلي", image: member10 },
+  { id: 3, name: "وسام أمين يحي", image: member4 },
+  { id: 11, name: "لودي هيكل حسون", image: member8 },
+  { id: 4, name: "ماريا ميشال الدايه", image: member2 },
+  { id: 5, name: "حلمي رامز أبي عز الدين", image: member6 },
+  { id: 12, name: "محسن محمود محاسن", image: member9 },
+  { id: 10, name: "شكري سعيد عدوان", image: member3 },
+  { id: 7, name: "جيسي طانوس لحود", image: member11 },
+  { id: 8, name: "جوزيف مارون خليل", image: member7 },
+  { id: 9, name: "حنين سميح العلي", image: member5 },
+  { id: 6, name: "حكمت رؤوف عبد السلام", image: member12 },
 ];
+
 export default function App() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
