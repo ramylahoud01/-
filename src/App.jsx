@@ -19,7 +19,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-
+import logo from "../public/logo.png"; // Adjust the path to your logo image
 // Import Material UI icons
 import {
   Gavel as GavelIcon,
@@ -284,7 +284,7 @@ export default function App() {
           {/* Logo on the left */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <img
-              src="/public/logo.png"
+              src={logo}
               alt="Logo"
               style={{
                 height: 75,
@@ -633,6 +633,7 @@ export default function App() {
                                 fontWeight: "bold",
                                 color: "#333",
                                 mr: 1,
+                                textAlign: "right",
                                 fontSize: { xs: "0.875rem", sm: "1rem" },
                               }}
                             >
@@ -641,6 +642,7 @@ export default function App() {
                             <Typography
                               component="span"
                               sx={{
+                                textAlign: "right",
                                 color: "#555",
                                 ml: { xs: 0, sm: 1 },
                                 fontSize: { xs: "0.815rem", sm: "0.938rem" },
